@@ -1,0 +1,23 @@
+{
+  "name": "sbotics-saver",
+  "version": "1.0.0",
+  "description": "sBoticsSaver is an intelligent algorithm responsible for creating folders and saving files, developed for internal use in the sBotics simulator launcher",
+  "main": "index.js",
+  "bugs": "https://github.com/you/my-new-project/issues",
+  "repository": {
+    "url": "https://github.com/jvneto/sBoticsSaver.git",
+    "type": "git"
+  },
+  "author": "Julio Cesar <60150667+jvneto@users.noreply.github.com>",
+  "license": "GNU GPLv3",
+  "keywords": [
+    "sbotics"
+  ],
+  "homepage": "https://sbotics.weduc.natalnet.br",
+  "files": [
+    "index.js"
+  ],
+  "bin": {
+    "sBoticsSaver": "index.js"
+  }
+}
