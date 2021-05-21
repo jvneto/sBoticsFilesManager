@@ -54,7 +54,7 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
 
   const defaultDirectory = settingsInstance.defaultDirectory;
 
-  if (defaultDirectory)
+  if (!defaultDirectory)
     return cb(
       new Error('expected "settings.defaultDirectory" to be specified'),
     );
