@@ -1,12 +1,40 @@
 'use strict';
 
 const fs = require('fs-extra');
+const path = require('path');
+const os = require('os');
 var extend = require('extend-shallow');
 
 function sBoticsSaver(settings) {
   if (!(this instanceof sBoticsSaver)) return new sBoticsSaver(settings);
 
-  const settingsInstance = extend({}, settings);
+  var defaultSettings = extend(
+    {
+      defaultDirectory: '',
+      useDirectoryHome: false,
+      nameFolderDefault: '',
+      saveAllFromDefaultDirectory: true,
+    },
+    settings,
+  );
+
+  const nameFolderDefault = defaultSettings.nameFolderDefault;
+  const useDirectoryHome = defaultSettings.useDirectoryHome;
+  var defaultDirectory = defaultSettings.defaultDirectory;
+
+  defaultDirectory = useDirectoryHome
+    ? path.join(os.homedir(), nameFolderDefault)
+    : defaultDirectory
+    ? path.join(defaultDirectory, nameFolderDefault)
+    : defaultDirectory;
+
+  const settingsInstance = {
+    defaultDirectory: defaultDirectory,
+    useDirectoryHome: useDirectoryHome,
+    nameFolderDefault: nameFolderDefault,
+    saveAllFromDefaultDirectory: defaultSettings.saveAllFromDefaultDirectory,
+  };
+
   this.settings = extend({}, settingsInstance, this.settings);
 }
 
@@ -15,14 +43,23 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
   if (typeof cb !== 'function')
     throw new TypeError('expected callback to be a function');
 
-  var settingsInstance = extend(
+  const settingsInstance = extend(
     {
       path: path,
+      useDirectoryPath: false,
     },
     this.settings,
     options,
   );
 
+  const defaultDirectory = settingsInstance.defaultDirectory;
+
+  if (defaultDirectory)
+    return cb(
+      new Error('expected "settings.defaultDirectory" to be specified'),
+    );
+
+  cb(null, settingsInstance);
   return this;
 };
 
