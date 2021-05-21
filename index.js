@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
 var extend = require('extend-shallow');
+var shell = require('shelljs');
 
 function sBoticsSaver(settings) {
   if (!(this instanceof sBoticsSaver)) return new sBoticsSaver(settings);
@@ -18,7 +19,7 @@ function sBoticsSaver(settings) {
     settings,
   );
 
-  const nameFolderDefault = defaultSettings.nameFolderDefault;
+  const nameFolderDefault = defaultSettings.nameFolderDefault + '/';
   const useDirectoryHome = defaultSettings.useDirectoryHome;
   var defaultDirectory = defaultSettings.defaultDirectory;
 
@@ -46,6 +47,7 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
   const settingsInstance = extend(
     {
       path: path,
+      pathFile: '',
       useDirectoryPath: false,
     },
     this.settings,
@@ -53,13 +55,26 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
   );
 
   const defaultDirectory = settingsInstance.defaultDirectory;
+  const saveAllFromDefaultDirectory =
+    settingsInstance.saveAllFromDefaultDirectory;
+  const useDirectoryPath = settingsInstance.useDirectoryPath;
+  var pathFile = settingsInstance.pathFile;
 
-  if (!defaultDirectory)
+  if (!defaultDirectory && saveAllFromDefaultDirectory)
     return cb(
       new Error('expected "settings.defaultDirectory" to be specified'),
     );
+  if (!path) return cb(new Error('expected "path" to be specified'));
 
-  cb(null, settingsInstance);
+  pathFile = useDirectoryPath
+    ? path
+    : saveAllFromDefaultDirectory
+    ? defaultDirectory + path
+    : path;
+
+  shell.mkdir('-p', pathFile);
+
+  cb(null, pathFile);
   return this;
 };
 
