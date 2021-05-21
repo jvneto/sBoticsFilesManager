@@ -6,6 +6,8 @@ const os = require('os');
 var extend = require('extend-shallow');
 var shell = require('shelljs');
 
+const createFolderpermission = 0o2775;
+
 function sBoticsSaver(settings) {
   if (!(this instanceof sBoticsSaver)) return new sBoticsSaver(settings);
 
@@ -47,6 +49,7 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
   const settingsInstance = extend(
     {
       path: path,
+      data: '',
       pathFile: '',
       useDirectoryPath: false,
     },
@@ -59,12 +62,15 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
     settingsInstance.saveAllFromDefaultDirectory;
   const useDirectoryPath = settingsInstance.useDirectoryPath;
   var pathFile = settingsInstance.pathFile;
+  const data = settingsInstance.data;
 
   if (!defaultDirectory && saveAllFromDefaultDirectory)
     return cb(
       new Error('expected "settings.defaultDirectory" to be specified'),
     );
+
   if (!path) return cb(new Error('expected "path" to be specified'));
+  if (!data) return cb(new Error('expected "data" to be specified'));
 
   pathFile = useDirectoryPath
     ? path
@@ -72,9 +78,34 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
     ? defaultDirectory + path
     : path;
 
-  shell.mkdir('-p', pathFile);
+  console.log(pathFile);
 
-  cb(null, pathFile);
+  const splitPath = path.split('/');
+  var newFolder = '';
+
+  if (splitPath.length > 1) {
+    for (let i = 0; i < splitPath.length - 1; i++) {
+      const element = splitPath[i];
+      newFolder += i > 0 ? `/${element}` : element;
+    }
+    newFolder = defaultDirectory + newFolder;
+  }
+  fs.ensureDirSync(newFolder, createFolderpermission);
+
+  const pathCreate = fs
+    .pathExists(newFolder)
+    .then((exists) => (exists ? true : false));
+
+  if (!pathCreate)
+    return cb(
+      new Error('Ocorreu uma falha ao criar pasta no diretorio informado'),
+    );
+
+  fs.writeFile(pathFile, data, (err) => {
+    if (err) return cb(false);
+    cb(null, true);
+  });
+
   return this;
 };
 
