@@ -144,7 +144,7 @@ sBoticsSaver.prototype.open = function (path, options, cb) {
     : path;
 
   const pathLocales = fs
-    .pathExists(newFolder)
+    .pathExists(pathFile)
     .then((exists) => (exists ? true : false));
 
   if (!pathLocales)

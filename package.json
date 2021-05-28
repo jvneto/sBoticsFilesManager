@@ -1,6 +1,6 @@
 {
   "name": "sbotics-saver",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "sBoticsSaver is an intelligent algorithm responsible for creating folders and saving files, developed for internal use in the sBotics simulator launcher",
   "main": "index.js",
   "bugs": "https://github.com/you/my-new-project/issues",
