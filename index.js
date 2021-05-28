@@ -196,6 +196,6 @@ sBoticsSaver.prototype.find = function (path, options, cb) {
 
   return fs
     .pathExists(pathFile)
-    .then((exists) => (exists ? cb(null, true) : cb(false)));
+    .then((exists) => (exists ? cb(null, true) : cb(null, false)));
 };
 module.exports = sBoticsSaver;
