@@ -8,8 +8,9 @@ var shell = require('shelljs');
 
 const createFolderpermission = 0o2775;
 
-function sBoticsSaver(settings) {
-  if (!(this instanceof sBoticsSaver)) return new sBoticsSaver(settings);
+function sBoticsFilesManager(settings) {
+  if (!(this instanceof sBoticsFilesManager))
+    return new sBoticsFilesManager(settings);
 
   var defaultSettings = extend(
     {
@@ -41,7 +42,7 @@ function sBoticsSaver(settings) {
   this.settings = extend({}, settingsInstance, this.settings);
 }
 
-sBoticsSaver.prototype.save = function (path, options, cb) {
+sBoticsFilesManager.prototype.save = function (path, options, cb) {
   if (typeof options === 'function') (cb = options), (options = {});
   if (typeof cb !== 'function')
     throw new TypeError('expected callback to be a function');
@@ -106,12 +107,12 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
     return cb(null, true);
   } catch (error) {
     return cb(false);
-  } 
+  }
 
   return this;
 };
 
-sBoticsSaver.prototype.open = function (path, options, cb) {
+sBoticsFilesManager.prototype.open = function (path, options, cb) {
   if (typeof options === 'function') (cb = options), (options = {});
   if (typeof cb !== 'function')
     throw new TypeError('expected callback to be a function');
@@ -168,7 +169,7 @@ sBoticsSaver.prototype.open = function (path, options, cb) {
   return this;
 };
 
-sBoticsSaver.prototype.find = function (path, options, cb) {
+sBoticsFilesManager.prototype.find = function (path, options, cb) {
   if (typeof options === 'function') (cb = options), (options = {});
   if (typeof cb !== 'function')
     throw new TypeError('expected callback to be a function');
@@ -207,4 +208,4 @@ sBoticsSaver.prototype.find = function (path, options, cb) {
     .then((exists) => (exists ? cb(null, true) : cb(null, false)));
 };
 
-module.exports = sBoticsSaver;
+module.exports = sBoticsFilesManager;
