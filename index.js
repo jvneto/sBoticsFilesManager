@@ -160,4 +160,42 @@ sBoticsSaver.prototype.open = function (path, options, cb) {
   return this;
 };
 
+sBoticsSaver.prototype.find = function (path, options, cb) {
+  if (typeof options === 'function') (cb = options), (options = {});
+  if (typeof cb !== 'function')
+    throw new TypeError('expected callback to be a function');
+
+  const settingsInstance = extend(
+    {
+      path: path,
+      pathFile: '',
+      useDirectoryPath: false,
+    },
+    this.settings,
+    options,
+  );
+
+  const defaultDirectory = settingsInstance.defaultDirectory;
+  const saveAllFromDefaultDirectory =
+    settingsInstance.saveAllFromDefaultDirectory;
+  const useDirectoryPath = settingsInstance.useDirectoryPath;
+  var pathFile = settingsInstance.pathFile;
+
+  if (!defaultDirectory && saveAllFromDefaultDirectory)
+    return cb(
+      new Error('expected "settings.defaultDirectory" to be specified'),
+    );
+
+  if (!path) return cb(new Error('expected "path" to be specified'));
+
+  pathFile = useDirectoryPath
+    ? path
+    : saveAllFromDefaultDirectory
+    ? defaultDirectory + path
+    : path;
+
+  return fs
+    .pathExists(pathFile)
+    .then((exists) => (exists ? cb(null, true) : cb(false)));
+};
 module.exports = sBoticsSaver;
