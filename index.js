@@ -101,10 +101,12 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
       new Error('Ocorreu uma falha ao criar pasta no diretorio informado'),
     );
 
-  fs.writeFile(pathFile, data, (err) => {
-    if (err) return cb(false);
-    cb(null, true);
-  });
+  try {
+    fs.writeFileSync(pathFile, data);
+    return cb(null, true);
+  } catch (error) {
+    return cb(false);
+  } 
 
   return this;
 };
@@ -157,6 +159,12 @@ sBoticsSaver.prototype.open = function (path, options, cb) {
     cb(null, contents);
   });
 
+  try {
+    return cb(null, fs.readFileSync(pathFile, { encoding: 'utf8' }));
+  } catch (error) {
+    return cb(false);
+  }
+
   return this;
 };
 
@@ -198,4 +206,5 @@ sBoticsSaver.prototype.find = function (path, options, cb) {
     .pathExists(pathFile)
     .then((exists) => (exists ? cb(null, true) : cb(null, false)));
 };
+
 module.exports = sBoticsSaver;

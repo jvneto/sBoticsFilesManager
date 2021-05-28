@@ -1,11 +1,11 @@
 {
-  "name": "sbotics-saver",
-  "version": "1.1.0",
-  "description": "sBoticsSaver is an intelligent algorithm responsible for creating folders and saving files, developed for internal use in the sBotics simulator launcher",
+  "name": "sbotics-files-manager",
+  "version": "1.2.0",
+  "description": "sBoticsFilesManager is an intelligent algorithm responsible for creating folders and saving files, developed for internal use in the sBotics simulator launcher",
   "main": "index.js",
-  "bugs": "https://github.com/you/my-new-project/issues",
+  "bugs": "https://github.com/jvneto/sBoticsFilesManager/issues",
   "repository": {
-    "url": "https://github.com/jvneto/sBoticsSaver.git",
+    "url": "https://github.com/jvneto/sBoticsFilesManager.git",
     "type": "git"
   },
   "author": "Julio Cesar <60150667+jvneto@users.noreply.github.com>",
@@ -18,7 +18,7 @@
     "index.js"
   ],
   "bin": {
-    "sBoticsSaver": "index.js"
+    "sBoticsFilesManager": "index.js"
   },
   "dependencies": {
     "extend-shallow": "^3.0.2",
