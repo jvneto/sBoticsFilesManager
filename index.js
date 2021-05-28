@@ -44,8 +44,6 @@ function sBoticsFilesManager(settings) {
 
 sBoticsFilesManager.prototype.save = function (path, options, cb) {
   if (typeof options === 'function') (cb = options), (options = {});
-  if (typeof cb !== 'function')
-    throw new TypeError('expected callback to be a function');
 
   const settingsInstance = extend(
     {
@@ -104,9 +102,9 @@ sBoticsFilesManager.prototype.save = function (path, options, cb) {
 
   try {
     fs.writeFileSync(pathFile, data);
-    return cb(null, true);
+    return typeof cb !== 'function' ? true : cb(null, true);
   } catch (error) {
-    return cb(false);
+    return typeof cb !== 'function' ? false : cb(false);
   }
 
   return this;
@@ -114,8 +112,6 @@ sBoticsFilesManager.prototype.save = function (path, options, cb) {
 
 sBoticsFilesManager.prototype.open = function (path, options, cb) {
   if (typeof options === 'function') (cb = options), (options = {});
-  if (typeof cb !== 'function')
-    throw new TypeError('expected callback to be a function');
 
   const settingsInstance = extend(
     {
@@ -161,9 +157,10 @@ sBoticsFilesManager.prototype.open = function (path, options, cb) {
   });
 
   try {
-    return cb(null, fs.readFileSync(pathFile, { encoding: 'utf8' }));
+    const files = fs.readFileSync(pathFile, { encoding: 'utf8' });
+    return typeof cb !== 'function' ? files : cb(null, files);
   } catch (error) {
-    return cb(false);
+    return typeof cb !== 'function' ? false : cb(false);
   }
 
   return this;
@@ -171,8 +168,6 @@ sBoticsFilesManager.prototype.open = function (path, options, cb) {
 
 sBoticsFilesManager.prototype.find = function (path, options, cb) {
   if (typeof options === 'function') (cb = options), (options = {});
-  if (typeof cb !== 'function')
-    throw new TypeError('expected callback to be a function');
 
   const settingsInstance = extend(
     {
@@ -205,7 +200,15 @@ sBoticsFilesManager.prototype.find = function (path, options, cb) {
 
   return fs
     .pathExists(pathFile)
-    .then((exists) => (exists ? cb(null, true) : cb(null, false)));
+    .then((exists) =>
+      exists
+        ? typeof cb !== 'function'
+          ? true
+          : cb(null, true)
+        : typeof cb !== 'function'
+        ? false
+        : cb(null, false),
+    );
 };
 
 module.exports = sBoticsFilesManager;
