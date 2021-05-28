@@ -117,7 +117,6 @@ sBoticsSaver.prototype.open = function (path, options, cb) {
   const settingsInstance = extend(
     {
       path: path,
-      data: '',
       pathFile: '',
       useDirectoryPath: false,
     },
@@ -130,7 +129,6 @@ sBoticsSaver.prototype.open = function (path, options, cb) {
     settingsInstance.saveAllFromDefaultDirectory;
   const useDirectoryPath = settingsInstance.useDirectoryPath;
   var pathFile = settingsInstance.pathFile;
-  const data = settingsInstance.data;
 
   if (!defaultDirectory && saveAllFromDefaultDirectory)
     return cb(
@@ -138,7 +136,6 @@ sBoticsSaver.prototype.open = function (path, options, cb) {
     );
 
   if (!path) return cb(new Error('expected "path" to be specified'));
-  if (!data) return cb(new Error('expected "data" to be specified'));
 
   pathFile = useDirectoryPath
     ? path
