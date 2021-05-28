@@ -109,4 +109,58 @@ sBoticsSaver.prototype.save = function (path, options, cb) {
   return this;
 };
 
+sBoticsSaver.prototype.open = function (path, options, cb) {
+  if (typeof options === 'function') (cb = options), (options = {});
+  if (typeof cb !== 'function')
+    throw new TypeError('expected callback to be a function');
+
+  const settingsInstance = extend(
+    {
+      path: path,
+      data: '',
+      pathFile: '',
+      useDirectoryPath: false,
+    },
+    this.settings,
+    options,
+  );
+
+  const defaultDirectory = settingsInstance.defaultDirectory;
+  const saveAllFromDefaultDirectory =
+    settingsInstance.saveAllFromDefaultDirectory;
+  const useDirectoryPath = settingsInstance.useDirectoryPath;
+  var pathFile = settingsInstance.pathFile;
+  const data = settingsInstance.data;
+
+  if (!defaultDirectory && saveAllFromDefaultDirectory)
+    return cb(
+      new Error('expected "settings.defaultDirectory" to be specified'),
+    );
+
+  if (!path) return cb(new Error('expected "path" to be specified'));
+  if (!data) return cb(new Error('expected "data" to be specified'));
+
+  pathFile = useDirectoryPath
+    ? path
+    : saveAllFromDefaultDirectory
+    ? defaultDirectory + path
+    : path;
+
+  const pathLocales = fs
+    .pathExists(newFolder)
+    .then((exists) => (exists ? true : false));
+
+  if (!pathLocales)
+    return cb(
+      new Error('Ocorreu uma falha ao localizaR pasta no diretorio informado'),
+    );
+
+  fs.readFile(pathFile, 'utf8', (err, contents) => {
+    if (err) return cb(false);
+    cb(null, contents);
+  });
+
+  return this;
+};
+
 module.exports = sBoticsSaver;
