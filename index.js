@@ -124,7 +124,7 @@ sBoticsFilesManager.prototype.open = function (path, options, cb) {
 
   if (!defaultDirectory && saveAllFromDefaultDirectory)
     throw new TypeError('expected "settings.defaultDirectory" to be specified');
-  if (!path) throw new TypeError('expected "path" to be specified'); 
+  if (!path) throw new TypeError('expected "path" to be specified');
 
   pathFile = useDirectoryPath
     ? path
@@ -136,9 +136,8 @@ sBoticsFilesManager.prototype.open = function (path, options, cb) {
     .pathExists(pathFile)
     .then((exists) => (exists ? true : false));
 
-  if (!pathLocales)
-    throw new TypeError('Failed to find folder in directory.'); 
-    
+  if (!pathLocales) throw new TypeError('Failed to find folder in directory.');
+
   try {
     const files = fs.readFileSync(pathFile, { encoding: 'utf8' });
     return typeof cb !== 'function' ? files : cb(null, files);
@@ -167,8 +166,8 @@ sBoticsFilesManager.prototype.find = function (path, options, cb) {
   var pathFile = settingsInstance.pathFile;
 
   if (!defaultDirectory && saveAllFromDefaultDirectory)
-    throw new TypeError('expected "settings.defaultDirectory" to be specified'); 
-    
+    throw new TypeError('expected "settings.defaultDirectory" to be specified');
+
   if (!path) throw new TypeError('expected "path" to be specified');
 
   pathFile = useDirectoryPath
@@ -177,17 +176,13 @@ sBoticsFilesManager.prototype.find = function (path, options, cb) {
     ? defaultDirectory + path
     : path;
 
-  return fs
-    .pathExists(pathFile)
-    .then((exists) =>
-      exists
-        ? typeof cb !== 'function'
-          ? true
-          : cb(null, true)
-        : typeof cb !== 'function'
-        ? false
-        : cb(null, false),
-    );
+  return fs.existsSync(pathFile)
+    ? typeof cb !== 'function'
+      ? true
+      : cb(null, true)
+    : typeof cb !== 'function'
+    ? false
+    : cb(null, false);
 };
 
 module.exports = sBoticsFilesManager;
