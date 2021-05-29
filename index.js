@@ -106,8 +106,6 @@ sBoticsFilesManager.prototype.save = function (path, options, cb) {
   } catch (error) {
     return typeof cb !== 'function' ? false : cb(false);
   }
-
-  return this;
 };
 
 sBoticsFilesManager.prototype.open = function (path, options, cb) {
@@ -150,20 +148,12 @@ sBoticsFilesManager.prototype.open = function (path, options, cb) {
     return cb(
       new Error('Ocorreu uma falha ao localizaR pasta no diretorio informado'),
     );
-
-  fs.readFile(pathFile, 'utf8', (err, contents) => {
-    if (err) return cb(false);
-    cb(null, contents);
-  });
-
   try {
     const files = fs.readFileSync(pathFile, { encoding: 'utf8' });
     return typeof cb !== 'function' ? files : cb(null, files);
   } catch (error) {
     return typeof cb !== 'function' ? false : cb(false);
   }
-
-  return this;
 };
 
 sBoticsFilesManager.prototype.find = function (path, options, cb) {
