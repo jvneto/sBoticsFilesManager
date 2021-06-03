@@ -99,7 +99,7 @@ sBoticsFilesManager.prototype.save = function (path, options, cb) {
 
   try {
     fs.writeFileSync(pathFile, data);
-    if (format == 'zip') await unziper.extract(pathFile, newFolder);
+    if (format == 'zip') unziper.extract(pathFile, newFolder);
     return typeof cb !== 'function' ? true : cb(null, true);
   } catch (error) {
     return typeof cb !== 'function' ? false : cb(false);
