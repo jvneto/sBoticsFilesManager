@@ -5,6 +5,7 @@ const path = require('path');
 const os = require('os');
 var extend = require('extend-shallow');
 var shell = require('shelljs');
+const unziper = require('@xmcl/unzip');
 
 const createFolderpermission = 0o2775;
 
@@ -51,6 +52,7 @@ sBoticsFilesManager.prototype.save = function (path, options, cb) {
       data: '',
       pathFile: '',
       useDirectoryPath: false,
+      format: '',
     },
     this.settings,
     options,
@@ -62,6 +64,7 @@ sBoticsFilesManager.prototype.save = function (path, options, cb) {
   const useDirectoryPath = settingsInstance.useDirectoryPath;
   var pathFile = settingsInstance.pathFile;
   const data = settingsInstance.data;
+  const format = settingsInstance.format;
 
   if (!defaultDirectory && saveAllFromDefaultDirectory)
     throw new TypeError('expected "settings.defaultDirectory" to be specified');
@@ -96,6 +99,7 @@ sBoticsFilesManager.prototype.save = function (path, options, cb) {
 
   try {
     fs.writeFileSync(pathFile, data);
+    if (format == 'zip') await unziper.extract(pathFile, newFolder);
     return typeof cb !== 'function' ? true : cb(null, true);
   } catch (error) {
     return typeof cb !== 'function' ? false : cb(false);
