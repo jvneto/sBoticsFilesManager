@@ -230,4 +230,67 @@ sBoticsFilesManager.prototype.stat = function (path, options, cb) {
     return typeof cb !== 'function' ? false : cb(false);
   }
 };
+
+sBoticsFilesManager.prototype.copy = function (path, options, cb) {
+  if (typeof options === 'function') (cb = options), (options = {});
+
+  const settingsInstance = extend(
+    {
+      originalPath: path,
+      newPath: '',
+      useDirectoryPath: false,
+    },
+    this.settings,
+    options,
+  );
+
+  const defaultDirectory = settingsInstance.defaultDirectory;
+  const saveAllFromDefaultDirectory =
+    settingsInstance.saveAllFromDefaultDirectory;
+  const useDirectoryPath = settingsInstance.useDirectoryPath;
+  var newPath = settingsInstance.newPath;
+
+  if (!defaultDirectory && saveAllFromDefaultDirectory)
+    throw new TypeError('expected "settings.defaultDirectory" to be specified');
+  if (!path) throw new TypeError('expected "path" to be specified');
+
+  var pathFile = useDirectoryPath
+    ? path
+    : saveAllFromDefaultDirectory
+    ? defaultDirectory + path
+    : path;
+
+  const pathLocales = fs
+    .pathExists(pathFile)
+    .then((exists) => (exists ? true : false));
+
+  if (!pathLocales) throw new TypeError('Failed to find folder in directory.');
+
+  const splitPath = newPath.split('/');
+  var newFolder = '';
+
+  if (splitPath.length > 1) {
+    for (let i = 0; i < splitPath.length - 1; i++) {
+      const element = splitPath[i];
+      newFolder += i > 0 ? `/${element}` : element;
+    }
+    newFolder = defaultDirectory + newFolder;
+  }
+
+  fs.ensureDirSync(newFolder, createFolderpermission);
+
+  const pathCreate = fs
+    .pathExists(newFolder)
+    .then((exists) => (exists ? true : false));
+
+  if (!pathCreate) throw new TypeError('Failed to create folder in new directory.');
+
+  try {
+    const files = fs.copySync(pathFile, defaultDirectory + newPath);
+    return typeof cb !== 'function' ? files : cb(null, files);
+  } catch (error) {
+    return typeof cb !== 'function' ? false : cb(false);
+  }
+};
+
 module.exports = sBoticsFilesManager;
