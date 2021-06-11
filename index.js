@@ -287,7 +287,7 @@ sBoticsFilesManager.prototype.copy = function (path, options, cb) {
 
   try {
     const files = fs.copySync(pathFile, defaultDirectory + newPath);
-    return typeof cb !== 'function' ? files : cb(null, files);
+    return typeof cb !== 'function' ? true : cb(null, true);
   } catch (error) {
     return typeof cb !== 'function' ? false : cb(false);
   }

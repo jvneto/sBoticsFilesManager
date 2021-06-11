@@ -1,6 +1,6 @@
 {
   "name": "sbotics-files-manager",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "sBoticsFilesManager is an intelligent algorithm responsible for creating folders and saving files, developed for internal use in the sBotics simulator launcher",
   "main": "index.js",
   "bugs": "https://github.com/jvneto/sBoticsFilesManager/issues",
