@@ -283,10 +283,70 @@ sBoticsFilesManager.prototype.copy = function (path, options, cb) {
     .pathExists(newFolder)
     .then((exists) => (exists ? true : false));
 
-  if (!pathCreate) throw new TypeError('Failed to create folder in new directory.');
+  if (!pathCreate)
+    throw new TypeError('Failed to create folder in new directory.');
 
   try {
     const files = fs.copySync(pathFile, defaultDirectory + newPath);
+    return typeof cb !== 'function' ? true : cb(null, true);
+  } catch (error) {
+    return typeof cb !== 'function' ? false : cb(false);
+  }
+};
+
+sBoticsFilesManager.prototype.extractZip = function (path, options, cb) {
+  if (typeof options === 'function') (cb = options), (options = {});
+
+  const settingsInstance = extend(
+    {
+      path: path,
+      name: '',
+      pathFile: '',
+      useDirectoryPath: false,
+      format: '',
+    },
+    this.settings,
+    options,
+  );
+
+  const defaultDirectory = settingsInstance.defaultDirectory;
+  const saveAllFromDefaultDirectory =
+    settingsInstance.saveAllFromDefaultDirectory;
+  const useDirectoryPath = settingsInstance.useDirectoryPath;
+  var pathFile = settingsInstance.pathFile;
+
+  if (!defaultDirectory && saveAllFromDefaultDirectory)
+    throw new TypeError('expected "settings.defaultDirectory" to be specified');
+
+  if (!path) throw new TypeError('expected "path" to be specified');
+
+  pathFile = useDirectoryPath
+    ? path
+    : saveAllFromDefaultDirectory
+    ? defaultDirectory + path
+    : path;
+
+  const splitPath = path.split('/');
+  var newFolder = '';
+
+  if (splitPath.length > 1) {
+    for (let i = 0; i < splitPath.length - 1; i++) {
+      const element = splitPath[i];
+      newFolder += i > 0 ? `/${element}` : element;
+    }
+    newFolder = defaultDirectory + newFolder;
+  }
+
+  fs.ensureDirSync(newFolder, createFolderpermission);
+
+  const pathCreate = fs
+    .pathExists(newFolder)
+    .then((exists) => (exists ? true : false));
+
+  if (!pathCreate) throw new TypeError('Failed to create folder in directory.');
+
+  try {
+    unziper.extract(pathFile, newFolder);
     return typeof cb !== 'function' ? true : cb(null, true);
   } catch (error) {
     return typeof cb !== 'function' ? false : cb(false);
